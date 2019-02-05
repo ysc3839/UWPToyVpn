@@ -1,0 +1,8 @@
+namespace ToyVpnBG
+{
+	[default_interface]
+	runtimeclass VpnBackgroundTask : Windows.ApplicationModel.Background.IBackgroundTask
+	{
+		VpnBackgroundTask();
+	}
+}
