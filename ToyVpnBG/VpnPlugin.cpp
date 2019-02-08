@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "VpnPlugin.h"
-#include "strutil.h"
+#include "../strutil.h"
 
 using namespace winrt;
 using namespace Windows::Networking;
@@ -54,10 +54,25 @@ namespace winrt::ToyVpnBG::implementation
 				throw hresult_invalid_argument{ L"Invalid server host name" };
 			}
 
-			// TODO: change port
-			tunnel.ConnectAsync(serverHostname, L"8000").get();
+			std::wstring port, secret;
 
-			Handshake(tunnel, context->handshakeState);
+			Windows::Data::Xml::Dom::XmlDocument doc;
+			doc.LoadXml(channel.Configuration().CustomField());
+			auto root = doc.FirstChild();
+			if (root.NodeName() == L"toyvpn-config")
+			{
+				for (auto node : root.ChildNodes())
+				{
+					if (node.NodeName() == L"port")
+						port = node.InnerText();
+					else if (node.NodeName() == L"secret")
+						secret = node.InnerText();
+				}
+			}
+
+			tunnel.ConnectAsync(serverHostname, port).get();
+
+			Handshake(tunnel, context->handshakeState, secret);
 
 			Configure(channel, parametershs);
 		}
@@ -95,8 +110,7 @@ namespace winrt::ToyVpnBG::implementation
 	{
 		while (packets.Size() > 0)
 		{
-			auto packet = packets.RemoveAtBegin();
-			encapulatedPackets.Append(packet);
+			encapulatedPackets.Append(packets.RemoveAtBegin());
 		}
 	}
 
@@ -114,14 +128,14 @@ namespace winrt::ToyVpnBG::implementation
 		decapsulatedPackets.Append(buf);
 	}
 
-	void VpnPlugin::Handshake(DatagramSocket const& tunnel, std::atomic<HandshakeState> const& handshakeState)
+	void VpnPlugin::Handshake(DatagramSocket const& tunnel, std::atomic<HandshakeState> const& handshakeState, std::wstring const& secret)
 	{
 		for (int i = 0; i < 3; ++i)
 		{
 			DataWriter writer{ tunnel.OutputStream() };
 			writer.UnicodeEncoding(UnicodeEncoding::Utf8);
 			writer.WriteByte(0);
-			writer.WriteString(L"test"); // TODO: change secret
+			writer.WriteString(secret);
 			writer.StoreAsync().get();
 			writer.DetachStream();
 		}
@@ -172,9 +186,6 @@ namespace winrt::ToyVpnBG::implementation
 				case 'd':
 					dnsServerList.emplace_back(fields.at(1));
 					break;
-				/*case 's':
-					builder.addSearchDomain(fields.at(1));
-					break;*/
 				}
 			}
 			catch (std::out_of_range const&)

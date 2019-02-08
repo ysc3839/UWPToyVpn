@@ -12,6 +12,7 @@
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.ApplicationModel.Background.h>
 #include <winrt/Windows.ApplicationModel.Core.h>
+#include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.Networking.h>
 #include <winrt/Windows.Networking.Vpn.h>
 #include <winrt/Windows.Networking.Sockets.h>

@@ -20,7 +20,7 @@ namespace winrt::ToyVpnBG::implementation
 		void Decapsulate(Windows::Networking::Vpn::VpnChannel const& channel, Windows::Networking::Vpn::VpnPacketBuffer const& encapBuffer, Windows::Networking::Vpn::VpnPacketBufferList const& decapsulatedPackets, Windows::Networking::Vpn::VpnPacketBufferList const& controlPacketsToSend);
 
 	private:
-		void Handshake(Windows::Networking::Sockets::DatagramSocket const& tunnel, std::atomic<HandshakeState> const& handshakeState);
+		void Handshake(Windows::Networking::Sockets::DatagramSocket const& tunnel, std::atomic<HandshakeState> const& handshakeState, std::wstring const& secret);
 		void Configure(Windows::Networking::Vpn::VpnChannel const& channel, hstring const& parametershs);
 	};
 

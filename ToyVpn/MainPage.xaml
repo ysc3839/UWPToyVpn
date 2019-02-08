@@ -6,8 +6,25 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Click="ClickHandler">VPN Settings</Button>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel Margin="20,20,20,20">
+            <TextBlock Text="Server Address:" />
+            <TextBox x:Name="inputServer" InputScope="Url" />
+            <TextBlock Text="Server Port:" />
+            <TextBox x:Name="inputPort" InputScope="Digits" />
+            <TextBlock Text="Shared Secret:" />
+            <TextBox x:Name="inputSecret" InputScope="Password" />
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="chkAlwaysOn" Content="Always On" />
+                <HyperlinkButton Content="About Always On VPN" NavigateUri="https://docs.microsoft.com/windows-server/remote/remote-access/vpn/always-on-vpn/" />
+            </StackPanel>
+            <CheckBox x:Name="chkShowInSettings" Content="Show in VPN Settings" IsChecked="True" />
+            <StackPanel Orientation="Horizontal">
+                <Button Click="SaveVPN" Content="Save" />
+                <Button Click="ConnectVPN" Content="Connect" />
+                <Button Click="DisconnectVPN" Content="Disconnect" />
+                <Button Click="LaunchVPNSettings" Content="VPN Settings" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>
